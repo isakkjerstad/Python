@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 
+
 # Creates a new empty game board.
 def create_empty_board():
 
@@ -45,30 +46,37 @@ def update_board(rows, user, choice):
 
 
 # Ask the user for input, check and then return the result as int.
-def user_input(user):
+def user_input(user, chosen_values):
 
     # Placeholder value for the input.
     user_choice = ""
 
-    # List of accepted values and a boolean value.
+    # List of accepted values, chosen values and a boolean value.
     accepted_values = range(1, 10)
+    already_chosen = True
     choice_in_accepted_values = False
 
     # Error checking for the input.
-    while user_choice.isdigit() == False or choice_in_accepted_values == False:
+    while user_choice.isdigit() == False or choice_in_accepted_values == False or already_chosen == True:
 
         print("\n")
         user_choice = input("User {} - Please enter a number (1-9): ".format(user))
 
         # Digit and range check.
         if user_choice.isdigit() == False:
-            print("Please enter a valid number!")
+            print("Please enter a positive number!")
         else:
             if int(user_choice) in accepted_values:
                 choice_in_accepted_values = True
+                if int(user_choice) not in chosen_values:
+                    already_chosen = False
+                else:
+                    already_chosen = True
+                    print("The number is already chosen, pick another!")
             else:
                 print("Please enter a valid number!")
 
+    chosen_values.append(int(user_choice))
     return int(user_choice)
 
 
@@ -141,14 +149,23 @@ def check_for_win(rows, playing_user):
     return False
 
 
+
 # List of player names.
 users = ["X", "O"]
 
 # Game logic variables.
 playing_user = users[0]
+chosen_values = []
 max_total_rounds = 9
 current_rounds = 0
 win = False
+
+# Show the game board layout to the user.
+print("\n")
+
+print("['1','2','3']")
+print("['4','5','6']")
+print("['7','8','9']")
 
 # Create and store the game board.
 board = create_empty_board()
@@ -160,7 +177,7 @@ while current_rounds < max_total_rounds and win == False:
     playing_user = users[current_rounds % 2]
 
     # Ask for user input.
-    current_user_input = user_input(playing_user)
+    current_user_input = user_input(playing_user, chosen_values)
 
     # Update the game board based on the user input.
     update_board(board, playing_user, current_user_input)
